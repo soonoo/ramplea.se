@@ -1,0 +1,31 @@
+service: ramplease
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: prod
+  region: ap-northeast-2
+  memorySize: 128
+
+# package:
+#   exclude:
+#     - node_modules/**
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: ram.soonoo.me
+    basePath: ''
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+    certificateName: '*.soonoo.me'
+
+functions:
+  app:
+    handler: serverless.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+
