@@ -1,28 +1,54 @@
 const router = require('koa-router')()
-const fs = require('fs');
+const { readdirSync, readFileSync } = require('fs');
 const _ = require('lodash');
 
+const toLowerCaseParams = (params) => {
+  const newParams = {};
+  Object.keys(params).forEach(k => newParams[k] = params[k].toLowerCase());
+
+  return newParams;
+};
+
+router.use((ctx, next) => {
+  try {
+    const files = readdirSync('data').sort();
+    const data = readFileSync(`data/${files.pop()}`, { encoding: 'utf8' }); 
+    ctx.data = JSON.parse(data);
+  } catch(e) {
+    console.error(e);
+    ctx.status = 500;
+    return;
+  }
+  next();
+});
+
 router.get('/', (ctx, next) => {
-  ctx.body = fs.readFileSync('data.json', { encoding: 'utf8' });
-  ctx.set('Content-type', 'application/json');
-})
+  ctx.body = ctx.data;
+});
 
-router.get('/:platform', (ctx, next) => {
-  const data = fs.readFileSync('data.json', { encoding: 'utf8' });
-  const { platform } = ctx.params;
-  const price = _.get(JSON.parse(data), `${platform.toLowerCase()}`);
+router.get('/:locale', (ctx, next) => {
+  const { locale } = toLowerCaseParams(ctx.params);
+  const price = _.get(ctx.data, `${locale}`);
 
   if(!price) ctx.status = 404;
   else ctx.body = price;
-})
+});
 
-router.get('/:platform/:capacity', (ctx, next) => {
-  const data = fs.readFileSync('data.json', { encoding: 'utf8' });
-  const { platform, capacity } = ctx.params;
-  const price = _.get(JSON.parse(data), `${platform.toLowerCase()}.${capacity.toLowerCase()}`);
+router.get('/:locale/:platform', (ctx, next) => {
+  const { locale, platform } = toLowerCaseParams(ctx.params);
+  const price = _.get(ctx.data, `${locale}.${platform}`);
 
   if(!price) ctx.status = 404;
   else ctx.body = price;
-})
+});
 
-module.exports = router
+router.get('/:locale/:platform/:capacity', (ctx, next) => {
+  const { locale, platform, capacity } = toLowerCaseParams(ctx.params);
+  const price = _.get(ctx.data, `${locale}.${platform}.${capacity}`);
+
+  if(!price) ctx.status = 404;
+  else ctx.body = price;
+});
+
+module.exports = router;
+
