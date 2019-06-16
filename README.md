@@ -23,14 +23,14 @@ To get 16 gigabyes desktop RAM's price in US:
 (price is in [USD](https://en.wikipedia.org/wiki/United_States_dollar))
 
 ```
-$ curl ram.soonoo.me/us/desktop/16g
+$ curl https://ram.soonoo.me/us/desktop/16g
 84.71
 ```
 
 To get RAM prices in Korea:  
 (prices are in [KRW](https://en.wikipedia.org/wiki/South_Korean_won))
 ```
-$ curl ram.soonoo.me/kr
+$ curl https://ram.soonoo.me/kr
 {
   "kr": {
     "laptop": {"4g":"21080","8g":"36550","16g":"75710"},
