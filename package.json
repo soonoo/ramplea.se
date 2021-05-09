@@ -23,7 +23,7 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "koa-views": "^6.2.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "pug": "^2.0.3",
     "serverless-http": "^2.0.2"
   },
